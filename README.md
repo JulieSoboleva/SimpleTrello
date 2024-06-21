@@ -1,4 +1,3 @@
-# Домашнее задание №1 к лекции «Работа с файлами, DnD»
 
 [![Build status](https://ci.appveyor.com/api/projects/status/vxi1ls9n95q7star?svg=true)](https://ci.appveyor.com/project/JulieSoboleva/SimpleTrello)
 
