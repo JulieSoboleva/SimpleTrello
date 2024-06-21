@@ -10,36 +10,40 @@ export default class DnD {
   }
 
   toggleGrabbing() {
-    document.body.parentElement.classList.toggle('grabbing');
+    document.body.parentElement.classList.toggle("grabbing");
     this.hoverElements.forEach((element) => {
-      element.classList.toggle('hover');
+      element.classList.toggle("hover");
     });
   }
 
   insertElement(event, closest, element) {
-    const card = closest.closest('.list-card');
+    const card = closest.closest(".list-card");
     let list;
     if (!card) {
       list = closest;
-      let upCard = document
-        .elementFromPoint(event.clientX, event.clientY - this.cardsVerticalDistance);
-      let downCard = document
-        .elementFromPoint(event.clientX, event.clientY + this.cardsVerticalDistance);
-      if (upCard.className.startsWith('list-card')) {
-        upCard = upCard.closest('.list-card');
+      let upCard = document.elementFromPoint(
+        event.clientX,
+        event.clientY - this.cardsVerticalDistance,
+      );
+      let downCard = document.elementFromPoint(
+        event.clientX,
+        event.clientY + this.cardsVerticalDistance,
+      );
+      if (upCard.className.startsWith("list-card")) {
+        upCard = upCard.closest(".list-card");
         if (upCard) {
           list.insertBefore(element, upCard.nextElementSibling);
         }
-      } else if (downCard.className.startsWith('list-card')) {
-        downCard = downCard.closest('.list-card');
+      } else if (downCard.className.startsWith("list-card")) {
+        downCard = downCard.closest(".list-card");
         if (downCard) {
           list.insertBefore(element, downCard);
         }
       } else {
-        list.insertAdjacentElement('afterbegin', element);
+        list.insertAdjacentElement("afterbegin", element);
       }
     } else {
-      list = card.closest('.list-cards');
+      list = card.closest(".list-cards");
       const { top } = card.getBoundingClientRect();
 
       if (event.pageY > window.scrollY + top + card.offsetHeight / 2) {
@@ -56,26 +60,35 @@ export default class DnD {
   }
 
   handleMousedown() {
-    this.board.addEventListener('mousedown', (event) => {
+    this.board.addEventListener("mousedown", (event) => {
       event.preventDefault();
 
       // если карточки под курсором нет, выходим
-      const card = event.target.closest('.list-card');
-      if (!card || event.target.classList.contains('list-card-remover') 
-                || event.target.className.startsWith('card-composer')) {
+      const card = event.target.closest(".list-card");
+      if (
+        !card ||
+        event.target.classList.contains("list-card-remover") ||
+        event.target.className.startsWith("card-composer")
+      ) {
         return;
       }
 
       // запоминаем исходное расположение карточки и курсора
-      if (card.nextElementSibling && card.nextElementSibling.classList.contains('list-card')) {
-        this.origin.position = 'beforebegin';
+      if (
+        card.nextElementSibling &&
+        card.nextElementSibling.classList.contains("list-card")
+      ) {
+        this.origin.position = "beforebegin";
         this.origin.sibling = card.nextElementSibling;
-      } else if (card.previousElementSibling && card.previousElementSibling.classList.contains('list-card')) {
-        this.origin.position = 'afterend';
+      } else if (
+        card.previousElementSibling &&
+        card.previousElementSibling.classList.contains("list-card")
+      ) {
+        this.origin.position = "afterend";
         this.origin.sibling = card.previousElementSibling;
       } else {
-        this.origin.position = 'afterbegin';
-        this.origin.sibling = card.closest('.list-cards');
+        this.origin.position = "afterbegin";
+        this.origin.sibling = card.closest(".list-cards");
       }
       this.origin.shiftX = event.clientX - card.getBoundingClientRect().left;
       this.origin.shiftY = event.clientY - card.getBoundingClientRect().top;
@@ -87,19 +100,19 @@ export default class DnD {
 
       // создаём "летающую" карточку
       this.ghostEl = card.cloneNode(true);
-      this.ghostEl.classList.add('dragged');
+      this.ghostEl.classList.add("dragged");
       document.body.appendChild(this.ghostEl);
       this.ghostEl.style.left = `${this.origin.left}px`;
       this.ghostEl.style.top = `${this.origin.top}px`;
 
       // создаём "тень" летающей карточки на месте исходной
       this.template = card.cloneNode(true);
-      this.template.style.backgroundColor = '#e2e4ea';
-      this.template.style.boxShadow = 'none';
-      this.template.lastElementChild.style.display = 'none';
-      this.template.style.cursor = 'grabbing';
-      const title = this.template.querySelector('.list-card-title');
-      title.style.color = '#e2e4ea';
+      this.template.style.backgroundColor = "#e2e4ea";
+      this.template.style.boxShadow = "none";
+      this.template.lastElementChild.style.display = "none";
+      this.template.style.cursor = "grabbing";
+      const title = this.template.querySelector(".list-card-title");
+      title.style.color = "#e2e4ea";
       card.replaceWith(this.template);
 
       // отключаем hover эффекты и активируем курсор "grabbing"
@@ -108,7 +121,7 @@ export default class DnD {
   }
 
   handleMousemove() {
-    this.board.addEventListener('mousemove', (event) => {
+    this.board.addEventListener("mousemove", (event) => {
       event.preventDefault();
 
       // если карточка не схвачена, выходим
@@ -117,14 +130,14 @@ export default class DnD {
       }
 
       // поворачиваем "летающую" карточку
-      this.ghostEl.classList.add('transformed');
+      this.ghostEl.classList.add("transformed");
 
       // удаляем "тень" из предыдущего положения
       this.template.remove();
 
       // вставляем "тень", если есть доступное место
       const closest = document.elementFromPoint(event.clientX, event.clientY);
-      if (closest.className.startsWith('list-card')) {
+      if (closest.className.startsWith("list-card")) {
         this.insertElement(event, closest, this.template);
       }
 
@@ -135,7 +148,7 @@ export default class DnD {
   }
 
   handleMouseleave() {
-    this.board.addEventListener('mouseleave', () => {
+    this.board.addEventListener("mouseleave", () => {
       // если карточка не схвачена, выходим
       if (!this.draggedEl) {
         return;
@@ -162,7 +175,7 @@ export default class DnD {
   }
 
   handleMouseup() {
-    this.board.addEventListener('mouseup', (event) => {
+    this.board.addEventListener("mouseup", (event) => {
       // если карточка не схвачена, выходим
       if (!this.draggedEl) {
         return;
@@ -172,21 +185,30 @@ export default class DnD {
       this.template.remove();
 
       const closest = document.elementFromPoint(event.clientX, event.clientY);
-      if (Math.trunc(this.origin.left) === parseInt(this.ghostEl.style.left, 10) && 
-          Math.trunc(this.origin.top) === parseInt(this.ghostEl.style.top, 10)) {
+      if (
+        Math.trunc(this.origin.left) ===
+          parseInt(this.ghostEl.style.left, 10) &&
+        Math.trunc(this.origin.top) === parseInt(this.ghostEl.style.top, 10)
+      ) {
         // если карточка в исходном положении, то вернём её обратно
         const target = this.origin.sibling;
         target.insertAdjacentElement(this.origin.position, this.draggedEl);
-      } else if (closest.className.startsWith('list-card')) {
+      } else if (closest.className.startsWith("list-card")) {
         // если карточка была перемещена в новую позицию, то вставим в новую
         this.insertElement(event, closest, this.draggedEl);
         // обновим LocalStorage у старого списка
-        const originalCardsList = this.origin.sibling.closest('.list-cards');
-        localStorage.setItem(originalCardsList.dataset.key, originalCardsList.innerText);
-        const newCardsList = closest.closest('.list-cards');
+        const originalCardsList = this.origin.sibling.closest(".list-cards");
+        localStorage.setItem(
+          originalCardsList.dataset.key,
+          originalCardsList.innerText,
+        );
+        const newCardsList = closest.closest(".list-cards");
         if (originalCardsList !== newCardsList) {
           // если карточка не в старом списке, то обновляем LocalStorage нового
-          localStorage.setItem(newCardsList.dataset.key, newCardsList.innerText);
+          localStorage.setItem(
+            newCardsList.dataset.key,
+            newCardsList.innerText,
+          );
         }
       } else {
         // иначе возвращаем карточку туда, откуда она была взята
