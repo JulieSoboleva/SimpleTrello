@@ -2,7 +2,8 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/vxi1ls9n95q7star?svg=true)](https://ci.appveyor.com/project/JulieSoboleva/SimpleTrello)
 
-[GitHub Pages](https://juliesoboleva.github.io/simpletrello/)
+[GitHub Pages](https://juliesoboleva.github.io/SimpleTrello/)
+
 
 ## Trello
 
